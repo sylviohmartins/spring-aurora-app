@@ -78,7 +78,7 @@ Navegue até o diretório raiz do projeto (`spring-aurora-app`) e execute o scri
 
 Este script:
 1.  Inicia os contêineres `mysql` e `localstack` definidos no `docker-compose.yml` em modo *detached* (`-d`).
-2.  O contêiner `mysql` é configurado com um banco de dados `aurora_db` e usuário `root` com senha `password`, conforme `application.properties`.
+2.  O contêiner `mysql` é configurado com um banco de dados `aurora_db` e credenciais de aplicação (`aurora_user` / `aurora_pass`) alinhadas com o perfil `local`.
 3.  O contêiner `localstack` simula serviços AWS, incluindo RDS, que pode ser usado para futuras integrações AWS (embora para este exemplo, a conexão direta com o MySQL seja suficiente para a demonstração do Aurora compatível).
 4.  Aguardará 30 segundos para garantir que os serviços estejam totalmente inicializados.
 
@@ -127,9 +127,9 @@ Usado durante o desenvolvimento com o banco da `docker-compose`:
 ```properties
 spring.config.activate.on-profile=local
 
-spring.datasource.url=jdbc:mysql://localhost:3306/aurora_db
-spring.datasource.username=root
-spring.datasource.password=password
+spring.datasource.url=jdbc:mysql://localhost:3306/aurora_db?createDatabaseIfNotExist=true&serverTimezone=UTC
+spring.datasource.username=aurora_user
+spring.datasource.password=aurora_pass
 
 spring.jpa.hibernate.ddl-auto=update
 spring.jpa.show-sql=true
@@ -146,18 +146,25 @@ Voltado para instâncias Aurora gerenciadas:
 ```properties
 spring.config.activate.on-profile=prod
 
-spring.datasource.url=${AURORA_DB_URL:}
-spring.datasource.username=${AURORA_DB_USERNAME:}
-spring.datasource.password=${AURORA_DB_PASSWORD:}
+spring.cloud.aws.region.auto=false
+spring.cloud.aws.region.static=${AWS_REGION:sa-east-1}
 
-spring.cloud.aws.region.static=${AWS_REGION:us-east-1}
+cloud.aws.rds.instances[0].db-instance-identifier=${AURORA_WRITER_IDENTIFIER:gestaopagamentoscash-gestaodividas-awssae1aurmy-hom-0}
+cloud.aws.rds.instances[0].username=${DB_USERNAME:aurora_user}
+cloud.aws.rds.instances[0].password=${DB_PASSWORD:changeit}
+cloud.aws.rds.instances[0].databaseName=${DB_NAME:aurora_db}
+cloud.aws.rds.instances[0].readReplicaSupport=true
+cloud.aws.rds.instances[0].port=${AURORA_WRITER_PORT:8035}
+
+spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver
+
 spring.cloud.aws.secretsmanager.enabled=true
 spring.cloud.aws.secretsmanager.default-context=aurora-app
 spring.cloud.aws.secretsmanager.prefix=/config
 spring.cloud.aws.secretsmanager.profile-separator=_
 ```
 
-Quando o perfil `prod` está ativo, o Spring Cloud AWS Secrets Manager é habilitado e pode preencher automaticamente as propriedades do datasource a partir de segredos nomeados como `aurora-app_prod`. Caso a aplicação seja executada fora da AWS, é possível fornecer as mesmas variáveis de ambiente (`AURORA_DB_URL`, `AURORA_DB_USERNAME`, `AURORA_DB_PASSWORD`).
+Quando o perfil `prod` está ativo, o Spring Cloud AWS Secrets Manager é habilitado e o Spring Cloud AWS RDS descobre o endpoint do cluster Aurora a partir do identificador da instância escritora. Caso alguma informação precise ser ajustada por ambiente, utilize as variáveis de ambiente mostradas acima (por exemplo `AURORA_WRITER_IDENTIFIER`, `AWS_REGION`, `DB_USERNAME`, etc.).
 
 **Boas Práticas de Configuração:**
 
