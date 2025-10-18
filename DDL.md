@@ -433,6 +433,54 @@ public class SoliDiviDtraEntity implements Serializable {
 }
 ```
 
+```java
+package br.com.itau.caps.sispag.gestao.dividas.domain.entity;
+
+import java.io.Serializable;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.*;
+import lombok.*;
+import br.com.itau.caps.sispag.gestao.dividas.domain.jpa.UpperTrimConverter;
+
+@Getter @Setter
+@NoArgsConstructor(access = AccessLevel.PROTECTED) @AllArgsConstructor @Builder
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
+@Entity
+@Table(name = "tbepp915_filt_soli_divi_dtra")
+public class FiltSoliDiviDtraEntity implements Serializable {
+
+@Id
+@EqualsAndHashCode.Include
+@NotBlank @Size(max = 36)
+@Convert(converter = UpperTrimConverter.class)
+@Column(name = "cod_soli", nullable = false, length = 36)
+private String id;
+
+@Size(max = 50)
+@Convert(converter = UpperTrimConverter.class)
+@Column(name = "cod_uf_munc_veic", length = 50)
+private String codUfMuncVeic;
+
+@Min(0) @Max(9999)
+@Column(name = "ano_exer_divi_dtra")
+private Integer anoExerDiviDtra;
+
+@Size(max = 20)
+@Convert(converter = UpperTrimConverter.class)
+@Column(name = "cod_parc_dtra", length = 20)
+private String codParcDtra;
+
+@Size(max = 12)
+@Convert(converter = UpperTrimConverter.class)
+@Column(name = "cod_rena", length = 12)
+private String codRena;
+
+@Min(0) @Max(9)
+@Column(name = "cod_digt_fina_plac_veic")
+private Integer codDigtFinaPlacVeic;
+}
+```
+
 ### PK composta do veículo
 
 ```java
