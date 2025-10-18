@@ -800,7 +800,116 @@ public class MultDtraEntity implements Serializable {
 }
 ```
 
-> As entidades **PagdDiviDtraEntity** e **OpedSistDtraEntity** são simples; inclua conforme necessidade.
+```java
+package br.com.itau.caps.sispag.gestao.dividas.domain.entity;
+
+import java.io.Serializable;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.*;
+import lombok.*;
+import br.com.itau.caps.sispag.gestao.dividas.domain.jpa.UpperTrimConverter;
+
+@Getter @Setter
+@NoArgsConstructor(access = AccessLevel.PROTECTED) @AllArgsConstructor @Builder
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
+@Entity
+@Table(name = "tbepp920_pagd_divi_dtra")
+public class PagdDiviDtraEntity implements Serializable {
+
+  @Id
+  @EqualsAndHashCode.Include
+  @Column(name = "cod_idef_pagd_divi_dtra", nullable = false, length = 36)
+  private String id;
+
+  @NotBlank @Size(max = 2)
+  @Convert(converter = UpperTrimConverter.class)
+  @Column(name = "cod_tipo_pagd", nullable = false, length = 2)
+  private String codTipoPagd;
+
+  @Size(max = 12)
+  @Convert(converter = UpperTrimConverter.class)
+  @Column(name = "cod_sgtp_pagd", length = 12)
+  private String codSgtpPagd;
+
+  @Size(max = 120)
+  @Column(name = "nom_razo_soci_pagd", length = 120)
+  private String nomRazoSociPagd;
+
+  @NotBlank @Size(max = 15)
+  @Convert(converter = UpperTrimConverter.class)
+  @Column(name = "num_docm_pagd_dtra", nullable = false, length = 15)
+  private String numDocmPagdDtra;
+
+  @NotBlank @Size(max = 36)
+  @Convert(converter = UpperTrimConverter.class)
+  @Column(name = "cod_idef_ctrp_pagd", nullable = false, length = 36)
+  private String codIdefCtrpPagd;
+
+  @Size(max = 250)
+  @Column(name = "cod_modu_ctrp_pagd", length = 250)
+  private String codModuCtrpPagd;
+
+  @Size(max = 36)
+  @Convert(converter = UpperTrimConverter.class)
+  @Column(name = "cod_idef_cont", length = 36)
+  private String codIdefCont;
+
+  @NotBlank @Size(max = 10)
+  @Convert(converter = UpperTrimConverter.class)
+  @Column(name = "cod_tipo_cont", nullable = false, length = 10)
+  private String codTipoCont;
+
+  @Size(max = 2)
+  @Convert(converter = UpperTrimConverter.class)
+  @Column(name = "cod_cate_cont", length = 2)
+  private String codCateCont;
+
+  @NotBlank @Size(max = 4)
+  @Convert(converter = UpperTrimConverter.class)
+  @Column(name = "num_agen", nullable = false, length = 4)
+  private String numAgen;
+
+  @NotBlank @Size(max = 7)
+  @Convert(converter = UpperTrimConverter.class)
+  @Column(name = "num_cont", nullable = false, length = 7)
+  private String numCont;
+
+  @NotBlank @Size(max = 2)
+  @Convert(converter = UpperTrimConverter.class)
+  @Column(name = "num_digt", nullable = false, length = 2)
+  private String numDigt;
+}
+```
+
+```java
+package br.com.itau.caps.sispag.gestao.dividas.domain.entity;
+
+import java.io.Serializable;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.*;
+import lombok.*;
+
+@Getter @Setter
+@NoArgsConstructor(access = AccessLevel.PROTECTED) @AllArgsConstructor @Builder
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
+@Entity
+@Table(name = "tbepp919_oped_sist_dtra")
+public class OpedSistDtraEntity implements Serializable {
+
+  @Id
+  @EqualsAndHashCode.Include
+  @Column(name = "cod_idef_oped_dtra", nullable = false, length = 9)
+  private String id;
+
+  @Size(max = 36)
+  @Column(name = "cod_idef_pess", length = 36)
+  private String codIdefPess;
+
+  @NotBlank @Size(max = 80)
+  @Column(name = "nom_oped_sist_dtra", nullable = false, length = 80)
+  private String nomOpedSistDtra;
+}
+```
 
 ---
 
